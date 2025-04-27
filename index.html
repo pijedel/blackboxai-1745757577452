@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jollibee Clicker Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+    #jollibee {
+      transition: transform 0.2s ease;
+      cursor: pointer;
+    }
+    #jollibee:active {
+      transform: scale(0.9);
+    }
+  </style>
+</head>
+<body class="bg-yellow-50 min-h-screen flex flex-col items-center justify-center p-4">
+  <h1 class="text-4xl font-bold text-red-600 mb-6">Jollibee Clicker Game</h1>
+  <div class="mb-6 flex justify-center">
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Jollibee_Logo_2019.svg/1200px-Jollibee_Logo_2019.svg.png"
+      alt="Jollibee Picture"
+      class="w-48 h-auto rounded-lg shadow-lg"
+    />
+  </div>
+  <div class="flex space-x-10 mb-6">
+    <div class="text-center">
+      <p class="text-xl font-semibold text-gray-700">Score</p>
+      <p id="score" class="text-3xl font-bold text-red-600">0</p>
+    </div>
+    <div class="text-center">
+      <p class="text-xl font-semibold text-gray-700">Time Left</p>
+      <p id="timer" class="text-3xl font-bold text-red-600">30</p>
+    </div>
+  </div>
+  <div id="game-area" class="relative w-full max-w-xl h-96 bg-white rounded-lg shadow-lg overflow-hidden border-4 border-red-600">
+    <img
+      id="jollibee"
+      src="https://upload.wikimedia.org/wikipedia/en/thumb/7/7e/Jollibee_logo.svg/1200px-Jollibee_logo.svg.png"
+      alt="Jollibee"
+      class="absolute w-24 h-24"
+      style="top: 50%; left: 50%; transform: translate(-50%, -50%);"
+    />
+  </div>
+  <button id="start-btn" class="mt-8 px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition">Start Game</button>
+
+  <script>
+    const jollibee = document.getElementById('jollibee');
+    const scoreDisplay = document.getElementById('score');
+    const timerDisplay = document.getElementById('timer');
+    const startBtn = document.getElementById('start-btn');
+    const gameArea = document.getElementById('game-area');
+
+    let score = 0;
+    let timeLeft = 30;
+    let gameInterval;
+    let timerInterval;
+
+    function randomPosition() {
+      const areaRect = gameArea.getBoundingClientRect();
+      const jollibeeSize = 96; // 24rem in px approx (w-24 h-24)
+      const maxX = areaRect.width - jollibeeSize;
+      const maxY = areaRect.height - jollibeeSize;
+
+      const x = Math.floor(Math.random() * maxX);
+      const y = Math.floor(Math.random() * maxY);
+
+      return { x, y };
+    }
+
+    function moveJollibee() {
+      const { x, y } = randomPosition();
+      jollibee.style.left = x + 'px';
+      jollibee.style.top = y + 'px';
+    }
+
+    function startGame() {
+      score = 0;
+      timeLeft = 30;
+      scoreDisplay.textContent = score;
+      timerDisplay.textContent = timeLeft;
+      startBtn.disabled = true;
+
+      moveJollibee();
+
+      gameInterval = setInterval(() => {
+        moveJollibee();
+      }, 1000);
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = timeLeft;
+        if (timeLeft <= 0) {
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function endGame() {
+      clearInterval(gameInterval);
+      clearInterval(timerInterval);
+      startBtn.disabled = false;
+      alert('Game over! Your score is: ' + score);
+    }
+
+    jollibee.addEventListener('click', () => {
+      if (timeLeft > 0) {
+        score++;
+        scoreDisplay.textContent = score;
+        moveJollibee();
+      }
+    });
+
+    startBtn.addEventListener('click', startGame);
+  </script>
+</body>
+</html>
